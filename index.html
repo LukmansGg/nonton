@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Film Project Streaming</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background: #181818;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: #222;
+            padding: 1rem 2rem;
+            text-align: center;
+        }
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 2rem;
+        }
+        .video-container {
+            width: 90vw;
+            max-width: 800px;
+            background: #111;
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+            padding: 1rem;
+        }
+        video {
+            width: 100%;
+            border-radius: 8px;
+            background: #000;
+        }
+        .film-info {
+            margin-top: 1rem;
+            text-align: center;
+        }
+        @media (max-width: 600px) {
+            .video-container {
+                padding: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>My Film Project</h1>
+        <p>Watch the latest release below</p>
+    </header>
+    <main>
+        <div class="video-container">
+            <video controls poster="poster.jpg">
+                <source src="https://dn721608.ca.archive.org/0/items/encanto-2021_202204/Encanto%20%282021%29.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <div class="film-info">
+                <h2>Film Title</h2>
+                <p>Short description of your film project goes here.</p>
+            </div>
+            <div style="margin-top:1rem; text-align:center;">
+                <button id="audio-toggle">Switch to Indonesian Dub</button>
+            </div>
+            <audio id="indo-audio" src="https://ia904602.us.archive.org/34/items/encanto-dubcollection2021/Encanto%20%28Indonesian%20Dub%29.mp3"></audio>
+        </div>
+    </main>
+        <script>
+            const video = document.querySelector('video');
+            const indoAudio = document.getElementById('indo-audio');
+            const toggleBtn = document.getElementById('audio-toggle');
+            let usingDub = false;
+
+            toggleBtn.addEventListener('click', () => {
+                if (!usingDub) {
+                    video.muted = true;
+                    indoAudio.currentTime = video.currentTime;
+                    indoAudio.play();
+                    toggleBtn.textContent = "Switch to Original Audio";
+                    usingDub = true;
+                } else {
+                    video.muted = false;
+                    indoAudio.pause();
+                    toggleBtn.textContent = "Switch to Indonesian Dub";
+                    usingDub = false;
+                }
+            });
+
+            // Keep audio and video in sync
+            video.addEventListener('timeupdate', () => {
+                if (usingDub && Math.abs(indoAudio.currentTime - video.currentTime) > 0.3) {
+                    indoAudio.currentTime = video.currentTime;
+                }
+            });
+            video.addEventListener('play', () => { if (usingDub) indoAudio.play(); });
+            video.addEventListener('pause', () => { if (usingDub) indoAudio.pause(); });
+            video.addEventListener('seeking', () => { if (usingDub) indoAudio.currentTime = video.currentTime; });
+        </script>
+    </body>
+</html>
