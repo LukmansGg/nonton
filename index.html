@@ -79,8 +79,6 @@ function enableIndoDub() {
     indoAudio.currentTime = video.currentTime;
     toggleBtn.textContent = "Switch to Original Audio";
     usingDub = true;
-    // Only play if video is playing
-    if (!video.paused) indoAudio.play();
 }
 
 function disableIndoDub() {
@@ -90,7 +88,7 @@ function disableIndoDub() {
     usingDub = false;
 }
 
-// Auto-enable Indonesian dub on load, but don't autoplay
+// Auto-enable Indonesian dub on load, but don't autoplay anything
 window.addEventListener('DOMContentLoaded', () => {
     enableIndoDub();
     indoAudio.pause();
@@ -107,15 +105,28 @@ toggleBtn.addEventListener('click', () => {
     }
 });
 
+// When video plays, play Indonesian audio if dub is enabled
+video.addEventListener('play', () => {
+    if (usingDub) {
+        indoAudio.currentTime = video.currentTime;
+        indoAudio.play();
+    }
+});
+
+// When video pauses, pause Indonesian audio
+video.addEventListener('pause', () => {
+    if (usingDub) indoAudio.pause();
+});
+
 // Keep audio and video in sync
 video.addEventListener('timeupdate', () => {
     if (usingDub && Math.abs(indoAudio.currentTime - video.currentTime) > 0.3) {
         indoAudio.currentTime = video.currentTime;
     }
 });
-video.addEventListener('play', () => { if (usingDub) indoAudio.play(); });
-video.addEventListener('pause', () => { if (usingDub) indoAudio.pause(); });
-video.addEventListener('seeking', () => { if (usingDub) indoAudio.currentTime = video.currentTime; });
+video.addEventListener('seeking', () => {
+    if (usingDub) indoAudio.currentTime = video.currentTime;
+});
         </script>
     </body>
 </html>
