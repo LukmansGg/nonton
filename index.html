@@ -69,35 +69,49 @@
         </div>
     </main>
         <script>
-            const video = document.querySelector('video');
-            const indoAudio = document.getElementById('indo-audio');
-            const toggleBtn = document.getElementById('audio-toggle');
-            let usingDub = false;
+const video = document.querySelector('video');
+const indoAudio = document.getElementById('indo-audio');
+const toggleBtn = document.getElementById('audio-toggle');
+let usingDub = true; // Start with Indonesian dub
 
-            toggleBtn.addEventListener('click', () => {
-                if (!usingDub) {
-                    video.muted = true;
-                    indoAudio.currentTime = video.currentTime;
-                    indoAudio.play();
-                    toggleBtn.textContent = "Switch to Original Audio";
-                    usingDub = true;
-                } else {
-                    video.muted = false;
-                    indoAudio.pause();
-                    toggleBtn.textContent = "Switch to Indonesian Dub";
-                    usingDub = false;
-                }
-            });
+function enableIndoDub() {
+    video.muted = true;
+    indoAudio.currentTime = video.currentTime;
+    indoAudio.play();
+    toggleBtn.textContent = "Switch to Original Audio";
+    usingDub = true;
+}
 
-            // Keep audio and video in sync
-            video.addEventListener('timeupdate', () => {
-                if (usingDub && Math.abs(indoAudio.currentTime - video.currentTime) > 0.3) {
-                    indoAudio.currentTime = video.currentTime;
-                }
-            });
-            video.addEventListener('play', () => { if (usingDub) indoAudio.play(); });
-            video.addEventListener('pause', () => { if (usingDub) indoAudio.pause(); });
-            video.addEventListener('seeking', () => { if (usingDub) indoAudio.currentTime = video.currentTime; });
+function disableIndoDub() {
+    video.muted = false;
+    indoAudio.pause();
+    toggleBtn.textContent = "Switch to Indonesian Dub";
+    usingDub = false;
+}
+
+// Auto-enable Indonesian dub on load
+window.addEventListener('DOMContentLoaded', () => {
+    enableIndoDub();
+});
+
+// Toggle button
+toggleBtn.addEventListener('click', () => {
+    if (!usingDub) {
+        enableIndoDub();
+    } else {
+        disableIndoDub();
+    }
+});
+
+// Keep audio and video in sync
+video.addEventListener('timeupdate', () => {
+    if (usingDub && Math.abs(indoAudio.currentTime - video.currentTime) > 0.3) {
+        indoAudio.currentTime = video.currentTime;
+    }
+});
+video.addEventListener('play', () => { if (usingDub) indoAudio.play(); });
+video.addEventListener('pause', () => { if (usingDub) indoAudio.pause(); });
+video.addEventListener('seeking', () => { if (usingDub) indoAudio.currentTime = video.currentTime; });
         </script>
     </body>
 </html>
