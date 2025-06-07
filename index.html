@@ -77,9 +77,10 @@ let usingDub = true; // Start with Indonesian dub
 function enableIndoDub() {
     video.muted = true;
     indoAudio.currentTime = video.currentTime;
-    indoAudio.play();
     toggleBtn.textContent = "Switch to Original Audio";
     usingDub = true;
+    // Only play if video is playing
+    if (!video.paused) indoAudio.play();
 }
 
 function disableIndoDub() {
@@ -89,15 +90,18 @@ function disableIndoDub() {
     usingDub = false;
 }
 
-// Auto-enable Indonesian dub on load
+// Auto-enable Indonesian dub on load, but don't autoplay
 window.addEventListener('DOMContentLoaded', () => {
     enableIndoDub();
+    indoAudio.pause();
+    video.pause();
 });
 
 // Toggle button
 toggleBtn.addEventListener('click', () => {
     if (!usingDub) {
         enableIndoDub();
+        if (!video.paused) indoAudio.play();
     } else {
         disableIndoDub();
     }
